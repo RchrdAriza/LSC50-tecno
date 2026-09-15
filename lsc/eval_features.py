@@ -25,7 +25,7 @@ MODELS = {
 }
 
 
-def clip_features_combined(base_clips: list[str], landmarks: list[str]) -> tuple[np.ndarray, np.ndarray]:
+def clip_features_combined(base_clips: list[str], landmarks: list[str], torso_relative: bool = False) -> tuple[np.ndarray, np.ndarray]:
     """Concatenate per-clip features across multiple landmark sets.
 
     base_clips are the resolved paths for the first modality; the same
@@ -34,20 +34,18 @@ def clip_features_combined(base_clips: list[str], landmarks: list[str]) -> tuple
     """
     from .data import LANDMARK_DIRS, parse_filename
 
-    first_key = landmarks[0]
     feat_blocks = []
-    labels = None
     for base in base_clips:
         sign, vol, rep = parse_filename(os.path.basename(base))
         row_blocks = []
         for key in landmarks:
             path = LANDMARK_DIRS[key] / f"{sign}_{vol}_{rep}.csv"
-            row_blocks.append(extract_features(read_landmark_sequence(str(path))))
-        row = np.concatenate(row_blocks)
-        feat_blocks.append(row)
-        labels = label_of(base) if labels is None else None
+            # torso-relative centering only applies to body poses
+            rel = torso_relative and key == "body"
+            row_blocks.append(extract_features(read_landmark_sequence(str(path)), torso_relative=rel))
+        feat_blocks.append(np.concatenate(row_blocks))
     X = np.vstack(feat_blocks).astype(np.float32)
-    # recompute labels once from the first modality
+    # labels from the first modality
     y = np.asarray([label_of(p) for p in base_clips], dtype=np.int64)
     return X, y
 
@@ -59,6 +57,8 @@ def main():
                     help="Concatenate multiple landmark sets, e.g. --combine body hand_l hand_r")
     ap.add_argument("--model", default="mlp", choices=list(MODELS))
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--torso-relative", action="store_true",
+                    help="Re-center body landmarks on mid-shoulder point each frame")
     args = ap.parse_args()
 
     keys = args.combine if args.combine else [args.landmarks]
@@ -71,8 +71,8 @@ def main():
         test = [p for p in clips if parse_filename(os.path.basename(p))[1] == vol]
         train = [p for p in clips if parse_filename(os.path.basename(p))[1] != vol]
 
-        Xtr, ytr = clip_features_combined(train, keys)
-        Xte, yte = clip_features_combined(test, keys)
+        Xtr, ytr = clip_features_combined(train, keys, torso_relative=args.torso_relative)
+        Xte, yte = clip_features_combined(test, keys, torso_relative=args.torso_relative)
 
         sc = StandardScaler().fit(Xtr)
         Xtr_s = sc.transform(Xtr)

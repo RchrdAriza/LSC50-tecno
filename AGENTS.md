@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Raw research dataset for Colombian Sign Language (LSC). Sources: the LSC50 dataset (Flórez-Sierra et al. 2024, Scientific Data 11:1347, doi:10.1038/s41597-024-04172-5) and its original code repo `BiomecanicaUniandes/LSC50`. **No source code lives in this repo** — treat the tree as a fixed dataset.
+Raw research dataset for Colombian Sign Language (LSC). Sources: the LSC50 dataset (Flórez-Sierra et al. 2024, Scientific Data 11:1347, doi:10.1038/s41597-024-04172-5) and its original code repo `BiomecanicaUniandes/LSC50`. **The dataset is fixed** — `IMU/` and `LANDMARKS/` are treated as immutable data. Analysis code lives in `lsc/` (Stage 1: sign classification). Manage the Python env with **`uv`** (`uv sync`), not pip.
 
 The dataset contains **50 LSC signs** performed by **5 volunteers** (3 native, 2 non-native), each with 4 repetitions.
 
@@ -50,4 +50,4 @@ The sign→gloss dictionary (50 classes) is **only** in `IMU/INFO/Timestamps.xls
 - `.sto` quaternion values are comma-joined 4-tuples inside tab-delimited cells.
 - `.mot` angles are degrees, not radians.
 - Sampling rates: `.txt` claims 125 Hz, OpenSim/`.sto` are 120 Hz, RGB body video is 24 FPS, face video 50 FPS, depth/IR 30 FPS. Do not assume alignment.
-- No analysis code, notebooks, or scripts exist in this repo; any processing is new work. The upstream code repo (with `LoadFiles.ipynb`) is at `github.com/BiomecanicaUniandes/LSC50`.
+- Analysis code lives in `lsc/` (Stage 1: sign classification, leave-subject-out). Best config: RandomForest on body+hands (~34%). The upstream code repo (with `LoadFiles.ipynb`) is at `github.com/BiomecanicaUniandes/LSC50`.
