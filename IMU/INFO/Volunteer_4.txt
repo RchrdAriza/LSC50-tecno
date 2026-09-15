@@ -1,0 +1,6 @@
+height: 158cm
+humerus: 26cm
+radius: 21cm
+back (from coccyx to cervical vertebrae C7): 38cm
+
+sampling frecuency: 125Hz
