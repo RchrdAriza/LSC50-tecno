@@ -32,12 +32,16 @@ uv run python -m lsc.eval_features --combine body hand_l hand_r face --model rf
 
 # optional: re-center body landmarks on mid-shoulder point each frame
 uv run python -m lsc.eval_features --combine body hand_l hand_r --model rf --torso-relative
+
+# interactive demo: predict individual clips, show top-3 with probabilities
+uv run python -m lsc.demo                                  # walk through all volunteers
+uv run python -m lsc.demo --volunteer 0002 --sign 0030 --rep 0000   # single clip
 ```
 
 Modules: `config.py` (50-sign dictionary + exclusion of `0049`), `data.py`
 (landmark loaders + subject split), `features.py` (per-clip descriptors),
 `model.py` (temporal GRU), `eval_features.py` (leave-subject-out benchmark),
-`train.py` (GRU training loop).
+`train.py` (GRU training loop), `demo.py` (interactive single-clip predictor).
 
 ### Results (leave-subject-out, 49 classes, random chance = 2%)
 
