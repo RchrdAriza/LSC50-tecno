@@ -1,0 +1,23 @@
+[project]
+name = "lsc50"
+version = "0.1.0"
+description = "Colombian Sign Language (LSC) recognition and 3D avatar synthesis from the LSC50 dataset"
+readme = "README.md"
+authors = [
+    { name = "RchrdAriza", email = "rchrdalv@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=2.4.6",
+    "pandas>=3.0.5",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.17.1",
+    "torch>=2.14.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["lsc"]
