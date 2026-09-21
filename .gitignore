@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .python-version
 *.egg-info/
+
+# Generated Stage 2 output (reproducible via lsc.export_rig)
+AVATAR/

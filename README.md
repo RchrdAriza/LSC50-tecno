@@ -59,6 +59,43 @@ Findings:
   20 per class) — ensembles generalize better across signers.
 - Inter-volunteer variance is high (fold std ~0.15); this is the main challenge.
 
+## Stage 2 — Rigs and 3D avatars (`lsc/rig.py`)
+
+Builds a hierarchical skeleton (the **rig**) that drives 3D avatars from the
+OpenSim inverse-kinematics data, plus per-sign motion clips.
+
+### What the rig is
+
+- **Topology** from the OpenSim model: pelvis → torso → arms/hands and
+  pelvis → legs (14 bones), matching the `.osim` joint hierarchy.
+- **Bone lengths** from the per-volunteer anthropometrics (`Volunteer_N.txt`;
+  humerus/radius/back measured, the rest scaled from stature).
+- **Joint channels** mapped to the 42 `.mot` columns: each bone rotates by its
+  joint angles (degrees) in the documented axis order.
+- **Segmentation** of each volunteer's continuous `.mot` into one clip per sign
+  using `Timestamps.xlsx`, skipping corrupt zero-duration windows (V5/0049).
+
+The **equivalent** orientation source is `IMU/STO/*.sto`: raw XSENS dot
+world-frame quaternions for 6 IMU segments (torso, both humeri/radii, right
+hand) — orientation-only, no relative joints, no left hand.
+
+### Usage
+
+```sh
+# export a volunteer's rig + per-sign animations as JSON (renderer-agnostic)
+uv run python -m lsc.export_rig --volunteer 1 --out AVATAR
+uv run python -m lsc.export_rig --volunteer all --out AVATAR   # all 5
+
+# python API
+uv run python -c "from lsc.rig import segment, bone_lengths, forward_kinematics;
+print(len(segment(1)), bone_lengths(1)['humerus_r']);
+print(forward_kinematics(1, '0030', 0)['hand_r_tip'])"
+```
+
+Output per volunteer: `AVATAR/Volunteer_N/rig.json` (skeleton + channel
+definitions) and one `<SIGN>_<GLOSS>.json` per sign (per-frame angles).
+Generated under `AVATAR/` (gitignored, reproducible).
+
 ## Dataset
 
 This project uses the **LSC50: Colombian Sign Language Video and Inertial Measurement Dataset**:

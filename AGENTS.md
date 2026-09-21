@@ -50,4 +50,4 @@ The sign→gloss dictionary (50 classes) is **only** in `IMU/INFO/Timestamps.xls
 - `.sto` quaternion values are comma-joined 4-tuples inside tab-delimited cells.
 - `.mot` angles are degrees, not radians.
 - Sampling rates: `.txt` claims 125 Hz, OpenSim/`.sto` are 120 Hz, RGB body video is 24 FPS, face video 50 FPS, depth/IR 30 FPS. Do not assume alignment.
-- Analysis code lives in `lsc/` (Stage 1: sign classification, leave-subject-out). Best config: RandomForest on body+hands (~34%). The upstream code repo (with `LoadFiles.ipynb`) is at `github.com/BiomecanicaUniandes/LSC50`.
+- Analysis code lives in `lsc/` (Stage 1: sign classification, leave-subject-out; Stage 2: rigs/avatars). Best Stage 1 config: RandomForest on body+hands (~34%). The Stage 2 rig (`lsc/rig.py`) maps the `.mot` to skeletons segmented per sign. The upstream code repo (with `LoadFiles.ipynb`) is at `github.com/BiomecanicaUniandes/LSC50`.
